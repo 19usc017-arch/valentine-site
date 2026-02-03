@@ -43,12 +43,20 @@
         transition: transform 0.1s;
     }
 
+    /* 💓 YES Button Heartbeat (Normal) */
     #yes {
         background-color: #4CAF50;
         color: white;
         left: 110px;
         top: 140px;
         z-index: 11;
+        animation: heartbeat 1.6s infinite;
+    }
+
+    /* 💓 Faster heartbeat when hovered or tapped */
+    #yes:hover,
+    #yes:active {
+        animation: heartbeat-fast 0.8s infinite;
     }
 
     #no {
@@ -73,6 +81,23 @@
         pointer-events: none;
         font-size: 16px;
         animation: sparkleFade 1s linear forwards;
+    }
+
+    /* 💓 Heartbeat Animations */
+    @keyframes heartbeat {
+        0%   { transform: scale(1); }
+        25%  { transform: scale(1.1); }
+        40%  { transform: scale(1); }
+        60%  { transform: scale(1.15); }
+        100% { transform: scale(1); }
+    }
+
+    @keyframes heartbeat-fast {
+        0%   { transform: scale(1); }
+        30%  { transform: scale(1.2); }
+        50%  { transform: scale(1); }
+        70%  { transform: scale(1.25); }
+        100% { transform: scale(1); }
     }
 
     @keyframes floatUp {
@@ -184,7 +209,7 @@ function moveNoButton() {
     noBtn.style.top = y + "px";
 }
 
-// ✨ Heart sparkles follow mouse (desktop only)
+// ✨ Heart sparkles follow mouse (desktop)
 document.addEventListener("mousemove", (e) => {
     const sparkle = document.createElement("div");
     sparkle.classList.add("sparkle");
