@@ -24,6 +24,8 @@
         box-shadow: 0px 10px 30px rgba(0,0,0,0.2);
         position: relative;
         z-index: 10;
+        width: 420px;
+        height: 220px;
     }
 
     h1 {
@@ -44,14 +46,16 @@
     #yes {
         background-color: #4CAF50;
         color: white;
-        position: relative;
-        margin-right: 20px;
+        left: 110px;
+        top: 140px;
         z-index: 11;
     }
 
     #no {
         background-color: #ff4444;
         color: white;
+        left: 250px;
+        top: 140px;
         z-index: 11;
     }
 
@@ -90,44 +94,47 @@
             transform: scale(2) translateY(-20px);
         }
     }
+
+    /* Mobile hint */
+    .hint {
+        position: absolute;
+        bottom: 20px;
+        color: white;
+        font-size: 14px;
+        opacity: 0.8;
+        animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+        0% { opacity: 0.3; }
+        50% { opacity: 1; }
+        100% { opacity: 0.3; }
+    }
 </style>
 </head>
 
 <body>
 
-<div class="card">
+<div class="card" id="card">
     <h1>Bujji, will you be my Valentine? 💘</h1>
 
     <button id="yes" onclick="goNext()">YES 💖</button>
     <button id="no">NO 😝</button>
 </div>
 
+<div class="hint">💡 Mobile users: Tap YES for love music 🎵</div>
+
 <!-- Romantic Music -->
 <audio id="loveMusic" src="love.mp3"></audio>
 
 <script>
+const card = document.getElementById("card");
 const noBtn = document.getElementById("no");
 const yesBtn = document.getElementById("yes");
 const music = document.getElementById("loveMusic");
 
 let heartsStarted = false;
 let heartInterval = null;
-
-// 💖 Runaway NO button (never leaves screen)
-noBtn.addEventListener("mouseenter", () => {
-    const btnWidth = noBtn.offsetWidth;
-    const btnHeight = noBtn.offsetHeight;
-
-    const padding = 20;
-    const maxX = window.innerWidth - btnWidth - padding;
-    const maxY = window.innerHeight - btnHeight - padding;
-
-    const x = Math.random() * maxX;
-    const y = Math.random() * maxY;
-
-    noBtn.style.left = x + "px";
-    noBtn.style.top = y + "px";
-});
 
 // 💖 Floating hearts generator
 function createHeart() {
@@ -143,7 +150,41 @@ function createHeart() {
     }, 6000);
 }
 
-// ✨ Heart sparkles follow mouse
+// 😝 Move NO only when cursor is near the white card
+document.addEventListener("mousemove", (e) => {
+    const rect = card.getBoundingClientRect();
+    const proximity = 70;
+
+    const nearX =
+        e.clientX > rect.left - proximity &&
+        e.clientX < rect.right + proximity;
+
+    const nearY =
+        e.clientY > rect.top - proximity &&
+        e.clientY < rect.bottom + proximity;
+
+    if (nearX && nearY) {
+        moveNoButton();
+    }
+});
+
+function moveNoButton() {
+    const btnWidth = noBtn.offsetWidth;
+    const btnHeight = noBtn.offsetHeight;
+    const padding = 20;
+
+    const rect = card.getBoundingClientRect();
+    const maxX = rect.width - btnWidth - padding;
+    const maxY = rect.height - btnHeight - padding;
+
+    const x = Math.random() * maxX;
+    const y = Math.random() * maxY;
+
+    noBtn.style.left = x + "px";
+    noBtn.style.top = y + "px";
+}
+
+// ✨ Heart sparkles follow mouse (desktop only)
 document.addEventListener("mousemove", (e) => {
     const sparkle = document.createElement("div");
     sparkle.classList.add("sparkle");
@@ -159,19 +200,24 @@ document.addEventListener("mousemove", (e) => {
     }, 1000);
 });
 
-// 🎵 Start effects when cursor goes near YES
-yesBtn.addEventListener("mouseenter", () => {
+// 🎵 Start effects (desktop hover)
+yesBtn.addEventListener("mouseenter", startEffects);
+
+// 🎵 Start effects (mobile tap)
+yesBtn.addEventListener("touchstart", startEffects, { passive: true });
+
+function startEffects() {
     if (!heartsStarted) {
         heartsStarted = true;
 
-        // Start music
         music.volume = 0.5;
-        music.play();
+        music.play().catch(() => {
+            console.log("Mobile blocked autoplay until user interaction");
+        });
 
-        // Start floating hearts
         heartInterval = setInterval(createHeart, 400);
     }
-});
+}
 
 function goNext() {
     window.location.href = "thanks.html";
