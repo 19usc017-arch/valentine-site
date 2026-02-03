@@ -84,8 +84,13 @@
 
 <script>
 const noBtn = document.getElementById("no");
+const yesBtn = document.getElementById("yes");
 const music = document.getElementById("loveMusic");
 
+let heartsStarted = false;
+let heartInterval = null;
+
+// Runaway NO button
 noBtn.addEventListener("mouseover", () => {
     const x = Math.random() * (window.innerWidth - 100);
     const y = Math.random() * (window.innerHeight - 100);
@@ -108,16 +113,27 @@ function createHeart() {
     }, 6000);
 }
 
-setInterval(createHeart, 500);
+// Start effects when cursor goes near YES
+yesBtn.addEventListener("mouseenter", () => {
+    if (!heartsStarted) {
+        heartsStarted = true;
+
+        // Start music
+        music.volume = 0.5;
+        music.play();
+
+        // Start hearts
+        heartInterval = setInterval(createHeart, 400);
+    }
+});
 
 function goNext() {
-    music.play();
-    setTimeout(() => {
-        window.location.href = "thanks.html";
-    }, 1500);
+    window.location.href = "thanks.html";
 }
 </script>
 
+
 </body>
 </html>
+
 
