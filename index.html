@@ -12,6 +12,7 @@
         justify-content: center;
         align-items: center;
         font-family: Arial, sans-serif;
+        overflow: hidden;
     }
 
     .card {
@@ -20,6 +21,8 @@
         border-radius: 20px;
         text-align: center;
         box-shadow: 0px 10px 30px rgba(0,0,0,0.2);
+        position: relative;
+        z-index: 10;
     }
 
     h1 {
@@ -47,6 +50,23 @@
         background-color: #ff4444;
         color: white;
     }
+
+    .heart {
+        position: absolute;
+        color: #ff3366;
+        font-size: 20px;
+        animation: floatUp 6s linear infinite;
+        opacity: 0.7;
+    }
+
+    @keyframes floatUp {
+        from {
+            transform: translateY(100vh);
+        }
+        to {
+            transform: translateY(-10vh);
+        }
+    }
 </style>
 </head>
 
@@ -59,8 +79,12 @@
     <button id="no">NO 😝</button>
 </div>
 
+<!-- Romantic Music -->
+<audio id="loveMusic" src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"></audio>
+
 <script>
 const noBtn = document.getElementById("no");
+const music = document.getElementById("loveMusic");
 
 noBtn.addEventListener("mouseover", () => {
     const x = Math.random() * (window.innerWidth - 100);
@@ -70,8 +94,27 @@ noBtn.addEventListener("mouseover", () => {
     noBtn.style.top = y + "px";
 });
 
+// Floating hearts generator
+function createHeart() {
+    const heart = document.createElement("div");
+    heart.classList.add("heart");
+    heart.innerHTML = "💖";
+    heart.style.left = Math.random() * window.innerWidth + "px";
+    heart.style.fontSize = Math.random() * 30 + 10 + "px";
+    document.body.appendChild(heart);
+
+    setTimeout(() => {
+        heart.remove();
+    }, 6000);
+}
+
+setInterval(createHeart, 500);
+
 function goNext() {
-    window.location.href = "thanks.html";
+    music.play();
+    setTimeout(() => {
+        window.location.href = "thanks.html";
+    }, 1500);
 }
 </script>
 
