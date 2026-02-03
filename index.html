@@ -24,6 +24,8 @@
         box-shadow: 0px 10px 30px rgba(0,0,0,0.2);
         position: relative;
         z-index: 10;
+        width: 400px;
+        height: 200px;
     }
 
     h1 {
@@ -44,14 +46,16 @@
     #yes {
         background-color: #4CAF50;
         color: white;
-        position: relative;
-        margin-right: 20px;
+        left: 100px;
+        top: 120px;
         z-index: 11;
     }
 
     #no {
         background-color: #ff4444;
         color: white;
+        left: 230px;
+        top: 120px;
         z-index: 11;
     }
 
@@ -95,7 +99,7 @@
 
 <body>
 
-<div class="card">
+<div class="card" id="card">
     <h1>Bujji, will you be my Valentine? 💘</h1>
 
     <button id="yes" onclick="goNext()">YES 💖</button>
@@ -106,28 +110,12 @@
 <audio id="loveMusic" src="love.mp3"></audio>
 
 <script>
+const card = document.getElementById("card");
 const noBtn = document.getElementById("no");
 const yesBtn = document.getElementById("yes");
 const music = document.getElementById("loveMusic");
 
 let heartsStarted = false;
-let heartInterval = null;
-
-// 💖 Runaway NO button (never leaves screen)
-noBtn.addEventListener("mouseenter", () => {
-    const btnWidth = noBtn.offsetWidth;
-    const btnHeight = noBtn.offsetHeight;
-
-    const padding = 20;
-    const maxX = window.innerWidth - btnWidth - padding;
-    const maxY = window.innerHeight - btnHeight - padding;
-
-    const x = Math.random() * maxX;
-    const y = Math.random() * maxY;
-
-    noBtn.style.left = x + "px";
-    noBtn.style.top = y + "px";
-});
 
 // 💖 Floating hearts generator
 function createHeart() {
@@ -142,6 +130,23 @@ function createHeart() {
         heart.remove();
     }, 6000);
 }
+
+// 😝 NO runs away ONLY when mouse enters white card
+card.addEventListener("mouseenter", () => {
+    const cardRect = card.getBoundingClientRect();
+    const btnWidth = noBtn.offsetWidth;
+    const btnHeight = noBtn.offsetHeight;
+
+    const padding = 20;
+    const maxX = cardRect.width - btnWidth - padding;
+    const maxY = cardRect.height - btnHeight - padding;
+
+    const x = Math.random() * maxX;
+    const y = Math.random() * maxY;
+
+    noBtn.style.left = x + "px";
+    noBtn.style.top = y + "px";
+});
 
 // ✨ Heart sparkles follow mouse
 document.addEventListener("mousemove", (e) => {
@@ -159,17 +164,15 @@ document.addEventListener("mousemove", (e) => {
     }, 1000);
 });
 
-// 🎵 Start effects when cursor goes near YES
+// 🎵 Start music + hearts ONLY when hovering YES
 yesBtn.addEventListener("mouseenter", () => {
     if (!heartsStarted) {
         heartsStarted = true;
 
-        // Start music
         music.volume = 0.5;
         music.play();
 
-        // Start floating hearts
-        heartInterval = setInterval(createHeart, 400);
+        setInterval(createHeart, 400);
     }
 });
 
